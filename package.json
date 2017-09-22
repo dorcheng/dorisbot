@@ -1,9 +1,10 @@
 {
-  "name": "y",
+  "name": "dorisbot",
   "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
+  "description": "An intelligent chatbot",
+  "main": "app.js",
   "scripts": {
+    "start": "node app.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "",
