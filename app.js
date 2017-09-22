@@ -4,6 +4,15 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const request = require('request');
 const app = express();
+// const Wit = require('node-wit').Wit;
+// const log = require('node-wit').log;
+
+// const client = new Wit({
+//   accessToken: process.env.WIT_TOKEN,
+//   logger: new log.Logger(log.DEBUG) // optional
+// });
+
+// console.log(client.message('set an alarm tomorrow at 7am'));
 
 app.set('port', (process.env.PORT || 5000));
 
@@ -62,9 +71,11 @@ function receivedMessage(event) {
   var timeOfMessage = event.timestamp;
   var message = event.message;
 
-  console.log('Received message for user %d and page %d at %d with message:',
-    senderID, recipientID, timeOfMessage);
-  console.log(JSON.stringify(message));
+  console.log('THIS IS THE EVENT', JSON.stringify(event))
+
+  // console.log('Received message for user %d and page %d at %d with message:',
+  //   senderID, recipientID, timeOfMessage);
+  // console.log(JSON.stringify(message));
 
   var messageId = message.mid;
 
