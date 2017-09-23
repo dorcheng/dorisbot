@@ -105,9 +105,10 @@ function firstEntity(nlp, name) {
 function handleMessage(message, recipient) {
   // check greeting is here and is confident
   const greeting = firstEntity(message.nlp, 'greeting');
-  const goodbye = firstEntitiy(message.nlp, 'goodbye');
-  const question = firstEntitiy(message.nlp, 'question');
-  const hobbies = firstEntitiy(message.nlp, 'hobbies');
+  const goodbye = firstEntity(message.nlp, 'goodbye');
+  const question = firstEntity(message.nlp, 'question');
+  const hobbies = firstEntity(message.nlp, 'hobbies');
+  console.log('HANDLEMESSAGE', greeting, goodybye, question, hobbies)
 
   if (greeting && greeting.confidence > 0.8) {
     sendResponse('hi!!', recipientId);
