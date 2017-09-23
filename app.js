@@ -78,7 +78,6 @@ function receivedMessage(event) {
   // console.log(JSON.stringify(message));
 
   var messageId = message.mid;
-
   var messageText = message.text;
   var messageAttachments = message.attachments;
 
@@ -88,7 +87,7 @@ function receivedMessage(event) {
     // and send back the example. Otherwise, just echo the text we received.
     switch (messageText) {
       case 'generic':
-        sendGenericMessage(senderID);
+        handleMessage(messageText, senderID);
         break;
 
       default:
@@ -97,6 +96,48 @@ function receivedMessage(event) {
   } else if (messageAttachments) {
     sendTextMessage(senderID, 'Message with attachment received');
   }
+}
+
+function firstEntity(nlp, name) {
+  return nlp && nlp.entities && nlp.entities && nlp.entities[name] && nlp.entities[name][0];
+}
+
+function handleMessage(message, recipient) {
+  // check greeting is here and is confident
+  const greeting = firstEntity(message.nlp, 'greeting');
+  const goodbye = firstEntitiy(message.nlp, 'goodbye');
+  const question = firstEntitiy(message.nlp, 'question');
+  const hobbies = firstEntitiy(message.nlp, 'hobbies');
+
+  if (greeting && greeting.confidence > 0.8) {
+    sendResponse('hi!!', recipientId);
+  }
+
+  else if (goodbye && goodbye.confidence > 0.8) {
+    sendResponse('byee', recipientId);
+  }
+
+  else if (question && question.confidence > 0.9 && hobbies && hobbies.confidence > 0.9) {
+    sendResponse('Hmm, I like going on food adventures, eating dessert, hiking, biking, etc.', recipientId);
+  }
+
+  else {
+    sendResponse('not sure what you mean', recipientId);
+  }
+
+}
+
+function sendResponse(message, recipientId) {
+  var messageData = {
+    recipient: {
+      id: recipientId
+    },
+    sender_action: 'typing_on',
+    message: {
+      text: message
+    }
+  };
+  callSendAPI(messageData);
 }
 
 function sendTextMessage(recipientId, messageText) {
