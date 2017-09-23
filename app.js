@@ -4,15 +4,6 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const request = require('request');
 const app = express();
-// const Wit = require('node-wit').Wit;
-// const log = require('node-wit').log;
-
-// const client = new Wit({
-//   accessToken: process.env.WIT_TOKEN,
-//   logger: new log.Logger(log.DEBUG) // optional
-// });
-
-// console.log(client.message('set an alarm tomorrow at 7am'));
 
 app.set('port', (process.env.PORT || 5000));
 
@@ -82,63 +73,42 @@ function receivedMessage(event) {
   var messageAttachments = message.attachments;
 
   if (messageText) {
+    handleMessage(senderID, messageText);
 
-    // If we receive a text message, check to see if it matches a keyword
-    // and send back the example. Otherwise, just echo the text we received.
-    switch (messageText) {
-      case 'generic':
-        handleMessage(messageText, senderID);
-        break;
-
-      default:
-      handleMessage(messageText, senderID);
-    }
   } else if (messageAttachments) {
     sendTextMessage(senderID, 'Message with attachment received');
   }
 }
 
 function firstEntity(nlp, name) {
-  return nlp && nlp.entities && nlp.entities && nlp.entities[name] && nlp.entities[name][0];
+  if (nlp) {
+    return nlp.entities[name];
+  }
 }
 
-function handleMessage(message, recipient) {
+function handleMessage(recipientId, message) {
   // check greeting is here and is confident
   const greeting = firstEntity(message.nlp, 'greeting');
   const goodbye = firstEntity(message.nlp, 'goodbye');
   const question = firstEntity(message.nlp, 'question');
   const hobbies = firstEntity(message.nlp, 'hobbies');
-  console.log('HANDLEMESSAGE', greeting, goodbye, question, hobbies)
 
   if (greeting && greeting.confidence > 0.8) {
-    sendResponse('hi!!', recipientId);
+    sendTextMessage(recipientId, 'hi!!');
   }
 
   else if (goodbye && goodbye.confidence > 0.8) {
-    sendResponse('byee', recipientId);
+    sendTextMessage(recipientId, 'byee');
   }
 
   else if (question && question.confidence > 0.9 && hobbies && hobbies.confidence > 0.9) {
-    sendResponse('Hmm, I like going on food adventures, eating dessert, hiking, biking, etc.', recipientId);
+    sendTextMessage(recipientId, 'Hmm, I like going on food adventures, eating dessert, hiking, biking, etc.');
   }
 
   else {
-    sendResponse('not sure what you mean', recipientId);
+    sendTextMessage(recipientId, 'not sure what you mean');
   }
 
-}
-
-function sendResponse(message, recipientId) {
-  var messageData = {
-    recipient: {
-      id: recipientId
-    },
-    sender_action: 'typing_on',
-    message: {
-      text: message
-    }
-  };
-  callSendAPI(messageData);
 }
 
 function sendTextMessage(recipientId, messageText) {
@@ -174,53 +144,6 @@ function callSendAPI(messageData) {
       console.error(error);
     }
   });
-}
-
-function sendGenericMessage(recipientId) {
-  var messageData = {
-    recipient: {
-      id: recipientId
-    },
-    message: {
-      attachment: {
-        type: 'template',
-        payload: {
-          template_type: 'generic',
-          elements: [{
-            title: 'rift',
-            subtitle: 'Next-generation virtual reality',
-            item_url: 'https://www.oculus.com/en-us/rift/',
-            image_url: 'http://messengerdemo.parseapp.com/img/rift.png',
-            buttons: [{
-              type: 'web_url',
-              url: 'https://www.oculus.com/en-us/rift/',
-              title: 'Open Web URL'
-            }, {
-              type: 'postback',
-              title: 'Call Postback',
-              payload: 'Payload for first bubble',
-            }],
-          }, {
-            title: 'touch',
-            subtitle: 'Your Hands, Now in VR',
-            item_url: 'https://www.oculus.com/en-us/touch/',
-            image_url: 'http://messengerdemo.parseapp.com/img/touch.png',
-            buttons: [{
-              type: 'web_url',
-              url: 'https://www.oculus.com/en-us/touch/',
-              title: 'Open Web URL'
-            }, {
-              type: 'postback',
-              title: 'Call Postback',
-              payload: 'Payload for second bubble',
-            }]
-          }]
-        }
-      }
-    }
-  };
-
-  callSendAPI(messageData);
 }
 
 // Spin up the server
