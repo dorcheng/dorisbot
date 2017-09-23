@@ -91,7 +91,7 @@ function receivedMessage(event) {
         break;
 
       default:
-      sendTextMessage(senderID, messageText);
+      handleMessage(messageText, senderID);
     }
   } else if (messageAttachments) {
     sendTextMessage(senderID, 'Message with attachment received');
