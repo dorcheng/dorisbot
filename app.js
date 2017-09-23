@@ -65,8 +65,6 @@ function receivedMessage(event) {
 
   console.log('THIS IS THE EVENT', JSON.stringify(event))
   console.log('THIS IS THE NLP', nlp)
-  console.log('THIS IS GREETING', nlp.greeting)
-  console.log('THIS IS GREETING INDEX', nlp.greeting[0])
 
   // console.log('Received message for user %d and page %d at %d with message:',
   //   senderID, recipientID, timeOfMessage);
