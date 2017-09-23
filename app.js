@@ -64,7 +64,9 @@ function receivedMessage(event) {
   var nlp = message.nlp.entities;
 
   console.log('THIS IS THE EVENT', JSON.stringify(event))
-  console.log('THIS IS THE NLP', message.nlp.entities['greeting'])
+  console.log('THIS IS THE NLP', nlp)
+  console.log('THIS IS GREETING', nlp.greeting)
+  console.log('THIS IS GREETING INDEX', nlp.greeting[0])
 
   // console.log('Received message for user %d and page %d at %d with message:',
   //   senderID, recipientID, timeOfMessage);
@@ -94,11 +96,12 @@ function handleMessage(recipientId, message, entities) {
   // const goodbye = firstEntity(message.nlp, 'goodbye');
   // const question = firstEntity(message.nlp, 'question');
   // const hobbies = firstEntity(message.nlp, 'hobbies');
+  console.log('ARE YOU UNDEFINED', entities);
+  console.log('GREETING UNDEFINE???', entities.greeting)
+  console.log('GREETING INDEX', entities.greeting[0])
 
-  const greeting = entities['greeting'][0];
-  const goodbye = entities['goodbye'][0];
-
-  console.log('ARE YOU UNDEFINED', greeting, goodbye);
+  const greeting = entities.greeting[0];
+  const goodbye = entities.goodbye[0];
 
   if (greeting && greeting.confidence > 0.8) {
     sendTextMessage(recipientId, 'hi!!');
