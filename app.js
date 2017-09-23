@@ -61,6 +61,7 @@ function receivedMessage(event) {
   var recipientID = event.recipient.id;
   var timeOfMessage = event.timestamp;
   var message = event.message;
+  var nlp = message.nlp.entities;
 
   console.log('THIS IS THE EVENT', JSON.stringify(event))
   console.log('THIS IS THE NLP', message.nlp.entities['greeting'])
@@ -74,7 +75,7 @@ function receivedMessage(event) {
   var messageAttachments = message.attachments;
 
   if (messageText) {
-    handleMessage(senderID, messageText);
+    handleMessage(senderID, messageText, nlp);
 
   } else if (messageAttachments) {
     sendTextMessage(senderID, 'Message with attachment received');
@@ -87,17 +88,17 @@ function firstEntity(nlp, name) {
   }
 }
 
-function handleMessage(recipientId, message) {
+function handleMessage(recipientId, message, entities) {
   // check greeting is here and is confident
   // const greeting = firstEntity(message.nlp, 'greeting');
   // const goodbye = firstEntity(message.nlp, 'goodbye');
   // const question = firstEntity(message.nlp, 'question');
   // const hobbies = firstEntity(message.nlp, 'hobbies');
 
-  const greeting = message.nlp.entities['greeting'];
-  const goodbye = message.nlp.entities['goodbye'];
+  const greeting = entities['greeting'][0];
+  const goodbye = entities['goodbye'][0];
 
-  console.log('ARE YOU UNDEFINED', greeting, goodbye)
+  console.log('ARE YOU UNDEFINED', greeting, goodbye);
 
   if (greeting && greeting.confidence > 0.8) {
     sendTextMessage(recipientId, 'hi!!');
