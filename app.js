@@ -82,7 +82,7 @@ function receivedMessage(event) {
 
 function firstEntity(nlp, name) {
   if (nlp) {
-    return nlp.entities[name];
+    return nlp.entities[name][0];
   }
 }
 
