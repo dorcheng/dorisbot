@@ -84,24 +84,21 @@ function receivedMessage(event) {
   }
 }
 
-function firstEntity(nlp, name) {
-  if (nlp) {
-    return nlp.entities[name][0];
+function returnEntity(entities, name) {
+  if (entities[name]) {
+    return entities[name][0];
+  } else {
+    return null;
   }
 }
 
 function handleMessage(recipientId, message, entities) {
   // check greeting is here and is confident
-  // const greeting = firstEntity(message.nlp, 'greeting');
-  // const goodbye = firstEntity(message.nlp, 'goodbye');
-  // const question = firstEntity(message.nlp, 'question');
-  // const hobbies = firstEntity(message.nlp, 'hobbies');
-  console.log('ARE YOU UNDEFINED', entities);
-  console.log('GREETING UNDEFINE???', entities.greeting)
-  console.log('GREETING INDEX', entities.greeting[0])
-
-  const greeting = entities.greeting[0];
-  const goodbye = entities.goodbye[0];
+  const greeting = returnEntity(entities, 'greeting');
+  const goodbye = returnEntity(entities, 'goodbye');
+  const question = returnEntity(entities, 'question');
+  const hobbies = returnEntity(entities, 'hobbies');
+  console.log('ARE YOU UNDEFINED', greeting, goodbye, question, hobbies);
 
   if (greeting && greeting.confidence > 0.8) {
     sendTextMessage(recipientId, 'hi!!');
