@@ -101,7 +101,7 @@ function handleMessage(recipientId, message) {
     sendTextMessage(recipientId, 'byee');
   }
 
-  else if (question && question.confidence > 0.9 && hobbies && hobbies.confidence > 0.9) {
+  else if (question && question.confidence > 0.8 && hobbies && hobbies.confidence > 0.8) {
     sendTextMessage(recipientId, 'Hmm, I like going on food adventures, eating dessert, hiking, biking, etc.');
   }
 
