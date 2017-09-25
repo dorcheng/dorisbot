@@ -2,19 +2,24 @@
   "name": "dorisbot",
   "version": "1.0.0",
   "description": "An intelligent chatbot",
-  "main": "app.js",
+  "main": "index.js",
   "scripts": {
-    "start": "node app.js",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "node server",
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "seed": "node seed.js"
   },
-  "author": "",
+  "author": "Doris Cheng",
   "license": "ISC",
   "dependencies": {
+    "axios": "^0.16.2",
     "body-parser": "^1.18.2",
     "express": "^4.15.4",
     "fast-levenshtein": "^2.0.6",
     "js-yaml": "^3.10.0",
     "node-wit": "^4.3.0",
-    "request": "^2.82.0"
+    "pg": "^7.3.0",
+    "pg-hstore": "^2.3.2",
+    "request": "^2.82.0",
+    "sequelize": "^4.10.3"
   }
 }

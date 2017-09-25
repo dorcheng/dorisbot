@@ -7,8 +7,8 @@ var yaml = require('js-yaml');
 var levenshtein = require('fast-levenshtein');
 const request = require('request');
 const app = express();
-var messagePairs = require('./data/messagePairs').messagePairs;
-
+var messagePairs = require('../messagePairs.json');
+const TextMessage = require('./db/TextMessage.js');
 
 function checkSimilarity(input) {
   const keys = Object.keys(messagePairs);
@@ -165,5 +165,10 @@ function callSendAPI(messageData) {
 
 // Spin up the server
 app.listen(app.get('port'), function() {
-	console.log('running on port', app.get('port'));
+  console.log('running on port', app.get('port'));
+  TextMessage.sync()
+  .then(function(){
+    console.log('Server is connected');
+  })
+
 });
