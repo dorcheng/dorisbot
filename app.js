@@ -7,7 +7,7 @@ var yaml = require('js-yaml');
 var levenshtein = require('fast-levenshtein');
 const request = require('request');
 const app = express();
-var messagePairs = require('./data/messagePairs.json');
+var messagePairs = require('./data/messagePairs').messagePairs;
 
 
 function checkSimilarity(input) {
