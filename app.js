@@ -1,30 +1,52 @@
 'use strict';
 
+const fs = require('fs');
 const express = require('express');
 const bodyParser = require('body-parser');
+var yaml = require('js-yaml');
+var levenshtein = require('fast-levenshtein');
 const request = require('request');
 const app = express();
+var messagePairs = require('./data/messagePairs.json');
+
+
+function checkSimilarity(input) {
+  const keys = Object.keys(messagePairs);
+  let lowestLvl = null;
+  let lowestLvlKey = null;
+  for (var k = 0; k < keys.length; k++) {
+    let distance = levenshtein.get(keys[k], input);
+    let level = distance / Math.max(keys[k].length, input.length);
+    if (level <= 0.20) {
+      return messagePairs[keys[k]];
+    }
+    if (lowestLvl === null || lowestLvl > level) {
+      lowestLvl = level;
+      lowestLvlKey = keys[k];
+    }
+  }
+  if (lowestLvl > 0.25) {
+    return 'not sure what you mean o.o';
+  }
+  return messagePairs[lowestLvlKey];
+}
 
 app.set('port', (process.env.PORT || 5000));
-
-// Process application/x-www-form-urlencoded
 app.use(bodyParser.urlencoded({extended: false}));
-
-// Process application/json
 app.use(bodyParser.json());
 
-// Index route
+// Home
 app.get('/', function (req, res) {
 	res.send('Hello world, I am a chat bot');
 });
 
-// for Facebook verification
+// Facebook verification
 app.get('/webhook/', function (req, res) {
   if (req.query['hub.verify_token'] === process.env.FB_VERIFY_TOKEN) {
     res.send(req.query['hub.challenge']);
   }
   res.send('Error, wrong token');
-})
+});
 
 app.post('/webhook', function (req, res) {
   var data = req.body;
@@ -32,7 +54,7 @@ app.post('/webhook', function (req, res) {
   // Make sure this is a page subscription
   if (data.object === 'page') {
 
-    // Iterate over each entry - there may be multiple if batched
+    // Iterate over each entry
     data.entry.forEach(function(entry) {
       var pageID = entry.id;
       var timeOfEvent = entry.time;
@@ -47,11 +69,7 @@ app.post('/webhook', function (req, res) {
       });
     });
 
-    // Assume all went well.
-    //
-    // You must send back a 200, within 20 seconds, to let us know
-    // you've successfully received the callback. Otherwise, the request
-    // will time out and we will keep trying to resend.
+    // Send 200
     res.sendStatus(200);
   }
 });
@@ -65,14 +83,7 @@ function receivedMessage(event) {
 
   console.log('THIS IS THE EVENT', JSON.stringify(event))
   console.log('THIS IS THE NLP', nlp)
-  console.log('THIS IS GREETING', nlp.greeting)
-  console.log('THIS IS GREETING INDEX', nlp.greeting[0])
 
-  // console.log('Received message for user %d and page %d at %d with message:',
-  //   senderID, recipientID, timeOfMessage);
-  // console.log(JSON.stringify(message));
-
-  var messageId = message.mid;
   var messageText = message.text;
   var messageAttachments = message.attachments;
 
@@ -93,13 +104,12 @@ function returnEntity(entities, name) {
 }
 
 function handleMessage(recipientId, message, entities) {
-  // check greeting is here and is confident
   const greeting = returnEntity(entities, 'greeting');
   const goodbye = returnEntity(entities, 'goodbye');
   const question = returnEntity(entities, 'question');
   const hobbies = returnEntity(entities, 'hobbies');
-  console.log('ARE YOU UNDEFINED', greeting, goodbye, question, hobbies);
 
+  // check if entity exists and entity confidence > 0.8
   if (greeting && greeting.confidence > 0.8) {
     sendTextMessage(recipientId, 'hi!!');
   }
@@ -113,9 +123,9 @@ function handleMessage(recipientId, message, entities) {
   }
 
   else {
-    sendTextMessage(recipientId, 'not sure what you mean');
+    let result = checkSimilarity(message);
+    sendTextMessage(recipientId, result);
   }
-
 }
 
 function sendTextMessage(recipientId, messageText) {
