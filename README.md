@@ -2,7 +2,7 @@
 
 DorisBot is a smart chatbot that was built with Wit.ai and Messenger Platform. To make things more interesting, she was built with the goal of speaking like Doris Cheng (me!).
 
-![Demo](dorisbot.gif)
+![Demo](bot.gif)
 
 # Natural Language Processing
 
